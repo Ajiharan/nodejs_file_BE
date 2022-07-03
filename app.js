@@ -21,42 +21,40 @@ let conn = mysql.createConnection({
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/index.html"));
 });
-let storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); //Appending extension
-  },
-});
 
-let upload = multer({ storage: storage }).single("file");
+let upload = multer().single("file");
 
 app.post("/file", (req, res) => {
   upload(req, res, (err) => {
     if (err) {
       console.log(err);
     }
-    const { fileName, authorName, description, price } = req.body;
+    const { fileName, authorName, description, price, url } = req.body;
     let sql =
-      "INSERT INTO `publisher`(`fileName`,`authorName`, `description`,`image`,`price`) VALUES ('" +
+      "INSERT INTO `publisher`(`fileName`,`authorName`, `description`,`fileUrl`,`price`) VALUES ('" +
       fileName +
       "','" +
       authorName +
       "','" +
       description +
       "','" +
-      req.file.buffer +
+      url +
       "','" +
       price +
       "')";
     conn.query(sql, function (err, result) {
       if (err) throw err;
-      console.log("table created");
+      res.status(200).json("success");
     });
-    // res.json({
-    //   path: req.file.filename,
-    // });
+  });
+});
+
+app.get("/file", (req, res) => {
+  let sql = "select * from publisher";
+  conn.query(sql, function (err, result) {
+    if (err) throw err;
+
+    res.status(200).json(result);
   });
 });
 
