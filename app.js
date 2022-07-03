@@ -58,6 +58,14 @@ app.get("/file", (req, res) => {
   });
 });
 
+app.post("/login", (req, res) => {
+  const { userName, password } = req.body;
+  if (userName === "agent") {
+    return res.status(200).json("agent");
+  }
+  return res.status(200).json("publisher");
+});
+
 conn.connect(function (err) {
   if (err) throw err;
   console.log("Database is connected successfully !");
