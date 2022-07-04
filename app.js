@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
-
+const morgan = require("morgan");
 const path = require("path");
 const app = express();
 let mysql = require("mysql");
@@ -9,6 +9,7 @@ let mysql = require("mysql");
 app.use(express.static(path.join(__dirname + "/uploads")));
 app.use(express.json());
 app.use(cors());
+app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname + "/dist/fileUpload")));
 
 let conn = mysql.createConnection({
